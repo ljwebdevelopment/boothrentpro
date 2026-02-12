@@ -4,7 +4,7 @@ This project contains:
 - `index.html`: Owner/admin dashboard
 - `staff.html`: Staff portal (read-only)
 - `app.js` and `staff.js`: Browser logic (Firebase v10 modular SDK from CDN)
-- `functions/`: Firebase Cloud Function for secure invite claim linking
+- `functions/`: Firebase Cloud Functions for invite claim and server-side email enqueueing
 - `firestore.rules`: Security rules
 
 ## Setup Guide (step-by-step, beginner-friendly)
@@ -52,17 +52,16 @@ This project contains:
       - `email = owner email`
       - `createdAt = timestamp`
 
-6. **Email (manual send) — no configuration needed**
-   - There is **no SMTP setup**, **no Trigger Email extension**, and **no email API key**.
-   - When the owner clicks **Remind**, **Invite staff login**, or **Mark Paid**, the app opens an **Email Composer preview modal**.
-   - The owner can then:
-     - Copy email text,
-     - open their default email app,
-     - or open Gmail compose with prefilled fields.
+6. **Install Trigger Email extension (recommended email path)**
+   1. In Firebase Console go to **Extensions**.
+   2. Install **Trigger Email (firestore-send-email)**.
+   3. Choose collection path `mail`.
+   4. Provide SMTP settings (from SendGrid/Mailgun/other SMTP provider).
+   5. After install, when docs are written to `/mail`, extension sends email.
+
+   Alternative (not implemented here): custom SendGrid API calls from Cloud Functions.
 
 7. **Cloud Functions setup (requires terminal)**
-
-   Why a terminal is needed: Firebase Cloud Functions deployment currently requires Firebase CLI commands. In this project, the function is used for `claimInvite` (secure staff linking).
 
    What is a terminal? A terminal is a text window where you run commands.
 
@@ -77,7 +76,7 @@ This project contains:
    npm --version
    ```
 
-   If `npm` is missing, install Node.js LTS from https://nodejs.org first.
+   If `npm` missing, install Node.js LTS from https://nodejs.org first.
 
    Install Firebase CLI globally:
 
@@ -115,11 +114,11 @@ This project contains:
 10. **Final test checklist**
    - Owner logs in at `index.html`.
    - Owner creates employee.
-   - Owner clicks Invite staff login and sends invite manually from email composer.
-   - Staff opens `staff.html?invite=...` and signs in with email link.
-   - Invite is claimed (staff linked to right employee).
-   - Owner marks paid ($50 then $100).
-   - Receipt preview modal opens; owner can copy/open email app/Gmail.
+   - Owner clicks Invite staff login.
+   - Staff receives invite and opens `staff.html?invite=...` link.
+   - Staff signs in with email link and invite is claimed.
+   - Owner marks paid twice ($50, then $100).
+   - Receipt email is sent.
    - Staff sees updated status + receipts in portal.
 
 ## Debug locations
@@ -127,3 +126,4 @@ This project contains:
 - Browser errors: press `F12` -> Console tab.
 - Firestore rules: Firestore -> Rules -> Rules Playground (simulator).
 - Functions logs: `firebase functions:log` or Console -> Functions -> Logs.
+- Trigger Email extension logs: Console -> Extensions -> Trigger Email -> Logs.

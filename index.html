@@ -72,50 +72,6 @@
     <div id="panelContent"></div>
   </aside>
 
-  <div id="emailModalBackdrop" class="modal-backdrop hidden">
-    <section id="emailModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="emailModalTitle">
-      <header class="modal-header">
-        <h3 id="emailModalTitle">Email Composer</h3>
-        <button id="closeEmailModalBtn" class="btn secondary" type="button">Close</button>
-      </header>
-      <div class="modal-grid">
-        <div class="stack">
-          <p class="helper">This app cannot send email automatically. Choose a method below to send from your email.</p>
-          <label>To
-            <input id="emailToInput" type="email" />
-          </label>
-          <label>Subject
-            <input id="emailSubjectInput" type="text" />
-          </label>
-          <div class="row-actions">
-            <button id="copySubjectBtn" class="btn secondary" type="button">Copy subject</button>
-          </div>
-          <label>Message body
-            <textarea id="emailBodyInput" rows="12"></textarea>
-          </label>
-          <div class="row-actions">
-            <button id="copyBodyBtn" class="btn secondary" type="button">Copy body</button>
-          </div>
-
-          <div class="row-actions wrap">
-            <button id="copyEmailBtn" class="btn" type="button">Copy Email</button>
-            <button id="openMailAppBtn" class="btn secondary" type="button">Open Email App</button>
-            <button id="openGmailBtn" class="btn secondary" type="button">Use Gmail</button>
-            <button id="cancelEmailBtn" class="btn secondary" type="button">Cancel</button>
-          </div>
-
-          <p class="helper">Tip: attach the PDF receipt after your email app opens.</p>
-          <p class="helper">Gmail will open in a new tab. You may need to be signed in.</p>
-        </div>
-
-        <aside id="receiptSummaryCard" class="card receipt-summary hidden">
-          <h4>Receipt Summary</h4>
-          <div id="receiptSummaryContent" class="summary-list"></div>
-        </aside>
-      </div>
-    </section>
-  </div>
-
   <div id="loading" class="loading hidden">Loading…</div>
   <div id="toast" class="toast hidden"></div>
 

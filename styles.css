@@ -491,82 +491,6 @@ textarea:focus-visible {
   transform: translate(-50%, 6px);
 }
 
-
-
-.modal-backdrop {
-  position: fixed;
-  inset: 0;
-  z-index: 80;
-  background: rgba(15, 23, 42, 0.45);
-  display: grid;
-  place-items: center;
-  padding: var(--s4);
-}
-
-.modal {
-  width: min(980px, 100%);
-  max-height: 92dvh;
-  overflow: auto;
-  background: var(--panel);
-  border: 1px solid var(--borderStrong);
-  border-radius: var(--r3);
-  box-shadow: var(--shadowMd);
-  padding: var(--s5);
-  transform: translateY(0);
-  opacity: 1;
-  transition: var(--tr);
-}
-
-.modal-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--s3);
-  margin-bottom: var(--s3);
-}
-
-.modal-grid {
-  display: grid;
-  grid-template-columns: 1.55fr 1fr;
-  gap: var(--s4);
-}
-
-.row-actions {
-  display: flex;
-  gap: var(--s2);
-}
-
-.row-actions.wrap {
-  flex-wrap: wrap;
-}
-
-textarea {
-  min-height: 220px;
-  padding: var(--s3);
-  resize: vertical;
-}
-
-.receipt-summary {
-  padding: var(--s4);
-  align-self: start;
-}
-
-.summary-list {
-  display: grid;
-  gap: var(--s2);
-  font-size: var(--fsSm);
-}
-
-.modal-backdrop.hidden {
-  opacity: 0;
-  pointer-events: none;
-}
-
-.modal-backdrop.hidden .modal {
-  transform: translateY(8px);
-  opacity: 0;
-}
-
 /* Responsive layout */
 @media (max-width: 1024px) {
   .topbar { padding: var(--s3) var(--s5); }
@@ -613,18 +537,6 @@ textarea {
 
   .nav-tab {
     white-space: nowrap;
-  }
-
-  .modal {
-    padding: var(--s4);
-  }
-
-  .modal-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .row-actions {
-    flex-direction: column;
   }
 }
 
