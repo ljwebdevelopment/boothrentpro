@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BoothRent Pro - Staff Portal</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <h1>BoothRent Pro</h1>
+      <nav class="nav-tabs" aria-label="Primary">
+        <a class="nav-tab" href="index.html">Owner Dashboard</a>
+        <a class="nav-tab active" href="staff.html" aria-current="page">Staff Portal</a>
+      </nav>
+    </div>
+    <div class="topbar-actions">
+      <button id="themeToggleBtn" class="btn secondary" type="button" aria-label="Toggle dark mode">Toggle theme</button>
+      <span id="staffAuthEmail" class="auth-email"></span>
+      <button id="staffLogoutBtn" class="btn secondary hidden">Log out</button>
+    </div>
+  </header>
+
+  <main class="page">
+    <section id="staffLoginCard" class="card">
+      <h2>Passwordless Staff Login</h2>
+      <form id="sendLinkForm" class="stack">
+        <label>Email <input id="staffEmail" type="email" required /></label>
+        <button class="btn" type="submit">Send sign-in link</button>
+      </form>
+      <p class="helper">Open the email link on this same browser/device to complete sign-in.</p>
+    </section>
+
+    <section id="staffDashboard" class="hidden">
+      <div class="card">
+        <h2 id="staffWelcome">Welcome</h2>
+        <p id="staffStatus" class="helper">Status: ...</p>
+      </div>
+      <div class="card">
+        <h3>Receipts</h3>
+        <ul id="receiptList" class="simple-list"></ul>
+      </div>
+      <div class="card">
+        <h3>Payments</h3>
+        <ul id="paymentList" class="simple-list"></ul>
+      </div>
+    </section>
+  </main>
+
+  <div id="staffLoading" class="loading hidden">Loading…</div>
+  <div id="staffToast" class="toast hidden"></div>
+
+  <script type="module" src="staff.js"></script>
+</body>
+</html>
