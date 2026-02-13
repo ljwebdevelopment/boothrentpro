@@ -16,7 +16,7 @@
       </nav>
     </div>
     <div class="topbar-actions">
-      <button id="themeToggleBtn" class="btn secondary" type="button">Toggle theme</button>
+      <button id="themeToggleBtn" class="btn secondary" type="button" aria-label="Toggle dark mode">Toggle theme</button>
       <span id="authEmail" class="auth-email"></span>
       <button id="logoutBtn" class="btn secondary hidden">Log out</button>
     </div>
@@ -35,41 +35,10 @@
     </section>
 
     <section id="dashboard" class="hidden">
-      <section class="card summary-grid" id="summaryGrid">
-        <article class="summary-card">
-          <p class="summary-label">Total due this week</p>
-          <p class="summary-value" id="summaryTotalDue">$0.00</p>
-        </article>
-        <article class="summary-card">
-          <p class="summary-label">Total received this week</p>
-          <p class="summary-value" id="summaryTotalReceived">$0.00</p>
-        </article>
-        <article class="summary-card">
-          <p class="summary-label">Past due count</p>
-          <p class="summary-value" id="summaryPastDue">0</p>
-        </article>
-        <article class="summary-card">
-          <p class="summary-label">Reminded count</p>
-          <p class="summary-value" id="summaryReminded">0</p>
-        </article>
-      </section>
-
-      <section class="card">
-        <div class="toolbar">
-          <div>
-            <h2 id="shopTitle">Dashboard</h2>
-            <p id="weekLabel" class="helper">Current week: ...</p>
-          </div>
-          <div class="toolbar-controls">
-            <label class="visually-hidden" for="searchInput">Search employees</label>
-            <input id="searchInput" type="search" placeholder="Search employee name or email" />
-            <select id="statusFilter">
-              <option value="active">Active only</option>
-              <option value="all">All employees</option>
-            </select>
-          </div>
-        </div>
-      </section>
+      <div class="card">
+        <h2 id="shopTitle">Dashboard</h2>
+        <p id="weekLabel" class="helper">Current week: ...</p>
+      </div>
 
       <section class="card">
         <h3>Add Employee</h3>
@@ -83,104 +52,25 @@
               <option>Thursday</option><option>Friday</option><option>Saturday</option><option>Sunday</option>
             </select>
           </label>
-          <button class="btn" type="submit" id="addEmployeeBtn">Create Employee</button>
+          <button class="btn" type="submit">Create Employee</button>
         </form>
       </section>
 
       <section class="card">
-        <h3>Employees</h3>
-        <p class="helper">GitHub-style list with real-time status updates.</p>
+        <h3>Employee Status</h3>
+        <p class="helper">GitHub-style list with quick status visibility.</p>
         <div id="employeeList" class="repo-list"></div>
       </section>
     </section>
   </main>
 
-  <aside id="drawer" class="panel hidden" aria-label="Employee details drawer">
+  <aside id="detailsPanel" class="panel hidden">
     <div class="panel-header">
-      <h3 id="drawerTitle">Employee Details</h3>
-      <button id="closeDrawerBtn" class="btn secondary" type="button">Close</button>
+      <h3 id="panelTitle">Employee Details</h3>
+      <button id="closePanel" class="btn secondary">Close</button>
     </div>
-    <div id="drawerContent"></div>
+    <div id="panelContent"></div>
   </aside>
-
-  <div id="paymentModalBackdrop" class="modal-backdrop hidden">
-    <section class="modal" role="dialog" aria-modal="true" aria-labelledby="paymentModalTitle">
-      <header class="modal-header">
-        <h3 id="paymentModalTitle">Mark Paid</h3>
-        <button id="closePaymentModalBtn" class="btn secondary" type="button">Close</button>
-      </header>
-      <form id="paymentForm" class="stack">
-        <label>Amount paid ($)
-          <input id="paymentAmount" type="number" min="0" step="0.01" required />
-          <small id="paymentAmountError" class="field-error hidden"></small>
-        </label>
-        <label>Payment method
-          <select id="paymentMethod">
-            <option>Cash</option>
-            <option>Card</option>
-            <option>CashApp</option>
-            <option>Venmo</option>
-            <option>Zelle</option>
-            <option>Other</option>
-          </select>
-        </label>
-        <label>Paid at
-          <input id="paymentPaidAt" type="datetime-local" />
-        </label>
-        <label>Notes
-          <textarea id="paymentNotes" rows="4" placeholder="Optional notes"></textarea>
-        </label>
-        <div class="row-actions wrap">
-          <button id="savePaymentBtn" class="btn" type="submit">Save Payment</button>
-          <button id="cancelPaymentBtn" class="btn secondary" type="button">Cancel</button>
-        </div>
-      </form>
-    </section>
-  </div>
-
-  <div id="confirmModalBackdrop" class="modal-backdrop hidden">
-    <section class="modal modal-sm" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
-      <header class="modal-header">
-        <h3 id="confirmTitle">Confirm action</h3>
-      </header>
-      <p id="confirmMessage" class="helper"></p>
-      <div class="row-actions wrap">
-        <button id="confirmActionBtn" class="btn danger" type="button">Confirm</button>
-        <button id="cancelConfirmBtn" class="btn secondary" type="button">Cancel</button>
-      </div>
-    </section>
-  </div>
-
-  <div id="emailModalBackdrop" class="modal-backdrop hidden">
-    <section id="emailModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="emailModalTitle">
-      <header class="modal-header">
-        <h3 id="emailModalTitle">Email Composer</h3>
-        <button id="closeEmailModalBtn" class="btn secondary" type="button">Close</button>
-      </header>
-      <div class="modal-grid">
-        <div class="stack">
-          <p class="helper">This app cannot send email automatically. Choose a method below to send from your email.</p>
-          <label>To <input id="emailToInput" type="email" /></label>
-          <label>Subject <input id="emailSubjectInput" type="text" /></label>
-          <div class="row-actions"><button id="copySubjectBtn" class="btn secondary" type="button">Copy subject</button></div>
-          <label>Message body <textarea id="emailBodyInput" rows="12"></textarea></label>
-          <div class="row-actions"><button id="copyBodyBtn" class="btn secondary" type="button">Copy body</button></div>
-          <div class="row-actions wrap">
-            <button id="copyEmailBtn" class="btn" type="button">Copy</button>
-            <button id="openMailAppBtn" class="btn secondary" type="button">Open Email App</button>
-            <button id="openGmailBtn" class="btn secondary" type="button">Use Gmail</button>
-            <button id="cancelEmailBtn" class="btn secondary" type="button">Close</button>
-          </div>
-          <p class="helper" id="emailLongBodyWarning"></p>
-          <p class="helper">Tip: attach a PDF receipt in your email app if needed.</p>
-        </div>
-        <aside id="receiptSummaryCard" class="card receipt-summary hidden">
-          <h4>Receipt Summary</h4>
-          <div id="receiptSummaryContent" class="summary-list"></div>
-        </aside>
-      </div>
-    </section>
-  </div>
 
   <div id="loading" class="loading hidden">Loading…</div>
   <div id="toast" class="toast hidden"></div>

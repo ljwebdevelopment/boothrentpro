@@ -76,10 +76,8 @@ initializeThemeToggle();
 async function completeEmailLinkIfNeeded() {
   if (!isSignInWithEmailLink(auth, window.location.href)) return;
   let email = window.localStorage.getItem('staffEmailForSignIn');
-  if (!email) {
-    showToast('Please enter your email in the form first, then open the sign-in link again.');
-    return;
-  }
+  if (!email) email = window.prompt('Confirm your email to finish sign-in');
+  if (!email) return;
   await signInWithEmailLink(auth, email, window.location.href);
   window.localStorage.removeItem('staffEmailForSignIn');
   showToast('Signed in successfully.');

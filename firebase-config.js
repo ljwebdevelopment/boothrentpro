@@ -9,12 +9,13 @@ import { getFunctions } from 'https://www.gstatic.com/firebasejs/10.14.1/firebas
 
 // Replace with your own project values from Firebase Console > Project Settings > General
 const firebaseConfig = {
-  apiKey: 'REPLACE_ME',
-  authDomain: 'REPLACE_ME.firebaseapp.com',
-  projectId: 'REPLACE_ME',
-  storageBucket: 'REPLACE_ME.appspot.com',
-  messagingSenderId: 'REPLACE_ME',
-  appId: 'REPLACE_ME'
+  apiKey: "AIzaSyA-lC9Lgvm7IaycERInoU9MSg9fc1j4yHM",
+  authDomain: "boothrent-pro.firebaseapp.com",
+  projectId: "boothrent-pro",
+  storageBucket: "boothrent-pro.firebasestorage.app",
+  messagingSenderId: "761610901694",
+  appId: "1:761610901694:web:0b0350219c872d4055e6ef",
+  measurementId: "G-5CM96PJ5S3"
 };
 
 export const app = initializeApp(firebaseConfig);
