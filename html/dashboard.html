@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BoothRent Pro | Admin Dashboard</title>
+    <link rel="stylesheet" href="../css/dashboard.css" />
+  </head>
+  <body>
+    <div class="dashboard-shell">
+      <header class="topbar">
+        <div class="brand">BoothRent Pro</div>
+        <label class="search-wrap" for="searchInput">
+          <span class="sr-only">Search renters</span>
+          <input id="searchInput" type="search" placeholder="Search by name, email, or station..." />
+        </label>
+        <div class="top-actions">
+          <button id="addRenterBtn" class="btn accent">+ Add Renter</button>
+          <button id="globalChargeBtn" class="btn">Create Charge</button>
+          <button id="logoutBtn" class="btn danger">Logout</button>
+        </div>
+      </header>
+
+      <main class="content">
+        <section class="summary-grid" aria-label="Summary cards">
+          <article class="summary-card">
+            <h2>Total Due</h2>
+            <p id="totalDueValue">$0.00</p>
+          </article>
+          <article class="summary-card">
+            <h2>Overdue</h2>
+            <p id="overdueValue">0</p>
+          </article>
+          <article class="summary-card">
+            <h2>Paid</h2>
+            <p id="paidValue">0</p>
+          </article>
+          <article class="summary-card">
+            <h2>Partial</h2>
+            <p id="partialValue">0</p>
+          </article>
+        </section>
+
+        <section class="table-card">
+          <div class="table-head-row grid-row">
+            <span>Renter</span>
+            <span>Email</span>
+            <span>Weekly Rent</span>
+            <span>Balance Due</span>
+            <span>Due Date</span>
+            <span>Status</span>
+            <span>Actions</span>
+          </div>
+          <div id="rentersTableBody" class="table-body" aria-live="polite"></div>
+        </section>
+      </main>
+    </div>
+
+    <aside id="drawer" class="drawer" aria-hidden="true">
+      <div class="drawer-header">
+        <h2 id="drawerTitle">Renter Profile</h2>
+        <button id="drawerCloseBtn" class="icon-btn" aria-label="Close profile">✕</button>
+      </div>
+      <div id="drawerBody" class="drawer-body"></div>
+    </aside>
+
+    <div id="modalOverlay" class="modal-overlay hidden" role="dialog" aria-modal="true">
+      <div class="modal-card" id="modalCard">
+        <div class="modal-head">
+          <h2 id="modalTitle">Modal Title</h2>
+          <button id="modalCloseBtn" class="icon-btn" aria-label="Close modal">✕</button>
+        </div>
+        <div id="modalBody" class="modal-body"></div>
+      </div>
+    </div>
+
+    <div id="toastRegion" class="toast-region" aria-live="polite" aria-atomic="true"></div>
+
+    <script type="module" src="../js/dashboard.js"></script>
+  </body>
+</html>
