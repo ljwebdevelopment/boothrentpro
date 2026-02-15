@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BoothRent Pro | Settings</title>
+    <link rel="icon" type="image/png" href="https://boothrentpro.com/assets/BoothRentprofavicon.png" />
+    <link rel="stylesheet" href="../css/settings.css" />
+  </head>
+  <body>
+    <main class="settings-page">
+      <section class="settings-card">
+        <div class="settings-header">
+          <h1>Business Settings</h1>
+          <a class="btn" href="/html/dashboard.html">Back to Dashboard</a>
+        </div>
+        <p class="subline">Everything here is used on receipts and receipt emails.</p>
+
+        <form id="settingsForm" class="form-grid">
+          <div><label for="businessName">Business Name *</label><input id="businessName" required /></div>
+          <div><label for="businessLogoUrl">Business Logo URL (shown on receipts)</label><input id="businessLogoUrl" /></div>
+          <div><label for="ownerName">Owner Name</label><input id="ownerName" /></div>
+          <div><label for="businessPhone">Business Phone</label><input id="businessPhone" /></div>
+          <div><label for="businessEmail">Business Email</label><input id="businessEmail" /></div>
+          <div><label for="businessStreet">Street</label><input id="businessStreet" /></div>
+          <div><label for="businessCity">City</label><input id="businessCity" /></div>
+          <div><label for="businessState">State</label><input id="businessState" /></div>
+          <div><label for="businessZip">ZIP</label><input id="businessZip" /></div>
+          <div class="full"><label for="receiptFooterNote">Receipt Footer Note</label><textarea id="receiptFooterNote"></textarea></div>
+
+          <div class="full actions-row">
+            <button class="btn accent" type="submit">Save Settings</button>
+          </div>
+        </form>
+
+        <section class="danger-zone">
+          <h2>Delete Account</h2>
+          <p class="subline">Type DELETE ACCOUNT to remove this account and all owned data from Firebase.</p>
+          <input id="deleteConfirm" placeholder="DELETE ACCOUNT" />
+          <button class="btn danger" id="deleteAccountBtn" type="button" disabled>Delete Account and All Data</button>
+        </section>
+
+        <p id="statusText" class="status-text" aria-live="polite"></p>
+      </section>
+    </main>
+
+    <script type="module" src="../js/settings.js"></script>
+  </body>
+</html>
