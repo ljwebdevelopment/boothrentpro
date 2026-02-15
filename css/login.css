@@ -1,14 +1,14 @@
 :root {
-  --bg-1: #ffffff;
-  --bg-2: #f0f9ff;
-  --bg-3: #f5f3ff;
-  --card-bg: rgba(255, 255, 255, 0.78);
-  --card-border: rgba(15, 23, 42, 0.12);
-  --text-main: #0f172a;
-  --text-muted: #475569;
-  --accent: #7c3aed;
-  --accent-2: #0ea5a4;
-  --danger: #dc2626;
+  --bg-1: #0f172a;
+  --bg-2: #1e293b;
+  --bg-3: #334155;
+  --card-bg: rgba(255, 255, 255, 0.06);
+  --card-border: rgba(255, 255, 255, 0.14);
+  --text-main: #f8fafc;
+  --text-muted: #cbd5e1;
+  --accent: #8b5cf6;
+  --accent-2: #14b8a6;
+  --danger: #f43f5e;
 }
 
 * { box-sizing: border-box; }
@@ -18,7 +18,7 @@ body {
   min-height: 100vh;
   font-family: "Inter", "Segoe UI", Roboto, sans-serif;
   color: var(--text-main);
-  background: linear-gradient(135deg, var(--bg-1) 0%, var(--bg-2) 52%, var(--bg-3) 100%);
+  background: linear-gradient(-45deg, var(--bg-1), var(--bg-2), #0b1120, var(--bg-3));
   background-size: 300% 300%;
   animation: gradientShift 16s ease infinite;
 }
@@ -37,7 +37,7 @@ body {
   border-radius: 18px;
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  box-shadow: 0 18px 35px rgba(15, 23, 42, 0.12);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
   padding: 28px;
   animation: cardEnter 0.75s ease both;
 }
@@ -50,8 +50,8 @@ label { display: inline-block; margin-bottom: 7px; color: var(--text-muted); fon
 
 input {
   width: 100%;
-  border: 1px solid #cbd5e1;
-  background: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.08);
   color: var(--text-main);
   border-radius: 12px;
   padding: 12px 14px;
@@ -61,7 +61,7 @@ input {
 input:focus {
   outline: none;
   border-color: var(--accent-2);
-  box-shadow: 0 0 0 3px rgba(14, 165, 164, 0.2);
+  box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.22);
 }
 
 .password-wrap { position: relative; }
@@ -72,8 +72,8 @@ input:focus {
   right: 8px;
   top: 50%;
   transform: translateY(-50%);
-  border: 1px solid #dbe3f0;
-  background: #f8fafc;
+  border: 0;
+  background: rgba(255, 255, 255, 0.15);
   color: var(--text-main);
   border-radius: 8px;
   padding: 7px 10px;
@@ -93,7 +93,7 @@ input:focus {
 .error {
   min-height: 22px;
   margin: 0 0 6px;
-  color: var(--danger);
+  color: #fecdd3;
   font-size: 0.92rem;
 }
 
