@@ -403,46 +403,6 @@ textarea { min-height: 88px; resize: vertical; }
   font-size: 0.75rem;
 }
 
-
-.mobile-nav-btn {
-  border: 0;
-  background: transparent;
-  color: var(--text);
-  display: grid;
-  place-items: center;
-  gap: 6px;
-  font-size: 0.78rem;
-  padding: 10px 6px;
-  min-height: 64px;
-  border-radius: 10px;
-  touch-action: manipulation;
-}
-
-.mobile-nav-btn:active {
-  background: rgba(124, 58, 237, 0.08);
-}
-
-.mobile-nav-icon {
-  display: grid;
-  place-items: center;
-  width: 30px;
-  height: 30px;
-  border-radius: 999px;
-  background: rgba(124, 58, 237, 0.14);
-  border: 1px solid rgba(124, 58, 237, 0.22);
-  color: #5b21b6;
-  font-size: 0.62rem;
-  font-weight: 700;
-  line-height: 1;
-}
-
-.receipt-settings-link {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-}
-
 /* Toast: white */
 .toast-region {
   position: fixed;
@@ -488,7 +448,7 @@ textarea { min-height: 88px; resize: vertical; }
 
 @media (max-width: 760px) {
   .brand-logo {
-    max-height: 44px;
+    max-height: 30px;
     width: auto;
   }
 
@@ -507,7 +467,7 @@ textarea { min-height: 88px; resize: vertical; }
 
   .mobile-bottom-nav {
     display: grid;
-    grid-template-columns: repeat(7, minmax(0, 1fr));
+    grid-template-columns: repeat(6, minmax(0, 1fr));
     position: fixed;
     bottom: 0;
     left: 0;
@@ -516,7 +476,6 @@ textarea { min-height: 88px; resize: vertical; }
     border-top: 1px solid var(--line);
     box-shadow: 0 -8px 18px rgba(15, 23, 42, 0.08);
     z-index: 85;
-    padding: 6px;
   }
 
   .back-to-top {
