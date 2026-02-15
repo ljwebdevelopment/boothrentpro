@@ -403,23 +403,6 @@ textarea { min-height: 88px; resize: vertical; }
   font-size: 0.75rem;
 }
 
-
-.mobile-nav-btn {
-  border: 0;
-  background: transparent;
-  color: var(--text);
-  display: grid;
-  place-items: center;
-  gap: 2px;
-  font-size: 0.72rem;
-  padding: 8px 4px;
-}
-
-.mobile-nav-btn span {
-  font-size: 1rem;
-  line-height: 1;
-}
-
 /* Toast: white */
 .toast-region {
   position: fixed;
