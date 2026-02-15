@@ -4,7 +4,7 @@ const isLoggedIn =
   sessionStorage.getItem("boothrent_admin") === "true";
 
 if (isLoggedIn) {
-  window.location.href = "./html/dashboard.html";
+  window.location.href = "/html/dashboard.html";
 }
 
 const loginForm = document.getElementById("loginForm");
@@ -84,5 +84,5 @@ loginForm.addEventListener("submit", async (event) => {
   // Store current admin email for messages logging.
   localStorage.setItem("boothrent_admin_email", matchedAdmin.email);
 
-  window.location.href = "./html/dashboard.html";
+  window.location.href = "/html/dashboard.html";
 });
