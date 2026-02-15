@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BoothRent Pro | Admin Login</title>
+    <link rel="stylesheet" href="./css/login.css" />
+  </head>
+  <body>
+    <main class="login-page">
+      <section class="login-card" id="loginCard" aria-labelledby="loginTitle">
+        <h1 id="loginTitle">BoothRent Pro</h1>
+        <p class="subtitle">Admin portal sign-in</p>
+
+        <form id="loginForm" novalidate>
+          <div class="field">
+            <label for="email">Email</label>
+            <input id="email" name="email" type="email" autocomplete="email" required />
+          </div>
+
+          <div class="field">
+            <label for="password">Password</label>
+            <div class="password-wrap">
+              <input
+                id="password"
+                name="password"
+                type="password"
+                autocomplete="current-password"
+                required
+              />
+              <button type="button" id="togglePassword" class="ghost-btn" aria-label="Show password">
+                Show
+              </button>
+            </div>
+          </div>
+
+          <label class="remember-row" for="rememberMe">
+            <input id="rememberMe" type="checkbox" />
+            <span>Remember me on this device</span>
+          </label>
+
+          <p id="errorText" class="error" aria-live="polite"></p>
+
+          <button id="loginBtn" type="submit" class="primary-btn">
+            <span class="btn-label">Sign In</span>
+            <span class="spinner" aria-hidden="true"></span>
+          </button>
+        </form>
+      </section>
+    </main>
+
+    <script src="./js/login.js"></script>
+  </body>
+</html>
