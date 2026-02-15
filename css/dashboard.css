@@ -157,6 +157,38 @@ body {
 }
 
 
+.themed-row {
+  border-radius: 10px;
+}
+
+.mobile-bottom-nav {
+  display: none;
+}
+
+.back-to-top {
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  width: 44px;
+  height: 44px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #fff;
+  font-size: 1.2rem;
+  cursor: pointer;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+  z-index: 90;
+}
+
+.back-to-top.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+
 .summary-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -420,38 +452,6 @@ textarea { min-height: 88px; resize: vertical; }
   font-size: 0.75rem;
 }
 
-
-.mobile-nav-btn {
-  border: 0;
-  background: transparent;
-  color: #475569;
-  min-height: 58px;
-  border-radius: 12px;
-  display: grid;
-  place-items: center;
-  cursor: pointer;
-  touch-action: manipulation;
-  transition: background 0.2s ease, color 0.2s ease;
-}
-
-.mobile-nav-btn i {
-  font-size: 1.25rem;
-}
-
-.mobile-nav-btn:hover,
-.mobile-nav-btn:focus-visible,
-.mobile-nav-btn:active {
-  background: rgba(124, 58, 237, 0.1);
-  color: #6d28d9;
-}
-
-.receipt-settings-link {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-}
-
 /* Toast: white */
 .toast-region {
   position: fixed;
@@ -497,13 +497,13 @@ textarea { min-height: 88px; resize: vertical; }
 
 @media (max-width: 760px) {
   .brand-logo {
-    max-height: 44px;
+    max-height: 30px;
     width: auto;
   }
 
   .content {
     padding: 16px;
-    padding-bottom: 116px;
+    padding-bottom: 104px;
   }
 
   .summary-grid { grid-template-columns: 1fr; }
@@ -512,6 +512,19 @@ textarea { min-height: 88px; resize: vertical; }
 
   .top-actions {
     display: none;
+  }
+
+  .mobile-bottom-nav {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: #ffffff;
+    border-top: 1px solid var(--line);
+    box-shadow: 0 -8px 18px rgba(15, 23, 42, 0.08);
+    z-index: 85;
   }
 
   .back-to-top {
