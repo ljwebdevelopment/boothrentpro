@@ -5,14 +5,9 @@ import {
   addDoc,
   setDoc,
   updateDoc,
-  getDoc,
-  deleteDoc,
-  getDocs,
-  writeBatch,
   onSnapshot,
   query,
   orderBy,
-  where,
   limit,
   increment,
 } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
@@ -28,6 +23,17 @@ const adminUid =
   `admin_${btoa(adminEmail).replace(/[^a-zA-Z0-9]/g, "").slice(0, 24)}`;
 
 const THEME_COLOR_PALETTE = ["#7c3aed", "#2563eb", "#0f766e", "#b45309", "#be123c", "#374151", "#166534", "#4338ca"];
+
+const PROFILE_COLOR_PALETTE = [
+  "#7c3aed",
+  "#2563eb",
+  "#0f766e",
+  "#b45309",
+  "#be123c",
+  "#374151",
+  "#166534",
+  "#4338ca",
+];
 
 const state = {
   renters: [],
@@ -46,7 +52,6 @@ const partialValue = document.getElementById("partialValue");
 const addRenterBtn = document.getElementById("addRenterBtn");
 const globalChargeBtn = document.getElementById("globalChargeBtn");
 const historyBtn = document.getElementById("historyBtn");
-const settingsBtn = document.getElementById("settingsBtn");
 const logoutBtn = document.getElementById("logoutBtn");
 const searchInput = document.getElementById("searchInput");
 const backToTopBtn = document.getElementById("backToTopBtn");
@@ -103,18 +108,8 @@ function colorTextForBackground(hexColor) {
   return luminance > 0.65 ? "#0f172a" : "#ffffff";
 }
 
-function hexToRgba(hexColor, alpha) {
-  const value = safe(hexColor).replace("#", "");
-  if (value.length !== 6) return `rgba(124,58,237,${alpha})`;
-  const r = Number.parseInt(value.slice(0, 2), 16);
-  const g = Number.parseInt(value.slice(2, 4), 16);
-  const b = Number.parseInt(value.slice(4, 6), 16);
-  return `rgba(${r},${g},${b},${alpha})`;
-}
-
-function getRandomThemeColor() {
-  const randomIndex = Math.floor(Math.random() * THEME_COLOR_PALETTE.length);
-  return THEME_COLOR_PALETTE[randomIndex];
+function pickRandomProfileColor() {
+  return PROFILE_COLOR_PALETTE[Math.floor(Math.random() * PROFILE_COLOR_PALETTE.length)];
 }
 
 function showToast(message) {
@@ -184,120 +179,23 @@ function buildEmailMessage(renter) {
     "Please submit your payment using your usual method (cash/card/Zelle) and reply if you have any questions.",
     "",
     "Thank you,",
-    state.businessProfile?.businessName || "Booth Rent Pro",
+    "Booth Rent Pro",
   ].join("\n");
 
   const preview = truncate(body.replace(/\n+/g, " "));
   const messageHash = btoa(unescape(encodeURIComponent(`${subject}|${body}`))).slice(0, 40);
 
-  return { toEmail: safe(renter.email), subject, body, preview, messageHash };
-}
-
-function buildReceiptModel(renter, paymentEntry) {
-  const business = state.businessProfile || {};
-  const createdAt = paymentEntry?.createdAt?.toDate ? paymentEntry.createdAt.toDate() : new Date();
-  const method = paymentEntry?.meta?.method || "Not provided";
-  const receiptId = paymentEntry?.id || `manual-${Date.now()}`;
-  const receiptNumber = `BRP-${receiptId.slice(0, 8).toUpperCase()}`;
-
   return {
-    businessName: business.businessName || "Booth Rent Pro",
-    businessLogoUrl: business.businessLogoUrl || "",
-    ownerName: business.ownerName || "",
-    businessAddress: business.businessAddress || {},
-    businessPhone: business.businessPhone || "",
-    businessEmail: business.businessEmail || adminEmail,
-    receiptFooterNote: business.receiptFooterNote || "",
-    renterName: renter?.displayName || "Unknown renter",
-    dateText: createdAt.toLocaleDateString(),
-    receiptNumber,
-    amountText: money(paymentEntry?.amountCents || 0),
-    paymentMethod: method,
-    notes: paymentEntry?.note || "",
-    lineItems: [
-      {
-        label: "Booth rent payment",
-        amountText: money(paymentEntry?.amountCents || 0),
-      },
-    ],
+    toEmail: safe(renter.email),
+    subject,
+    body,
+    preview,
+    messageHash,
   };
-}
-
-function businessAddressLine(address = {}) {
-  const parts = [address.street, address.city, address.state, address.zip].filter(Boolean);
-  return parts.join(", ");
-}
-
-function buildReceiptHtml(model, { forEmail = false } = {}) {
-  const address = businessAddressLine(model.businessAddress);
-  const logoBlock = model.businessLogoUrl
-    ? `<img src="${safe(model.businessLogoUrl)}" alt="${safe(model.businessName)} logo" style="width:52px;height:52px;border-radius:12px;object-fit:cover;" />`
-    : `<div style="width:52px;height:52px;border-radius:26px;background:#e2e8f0;color:#334155;display:flex;align-items:center;justify-content:center;font-weight:700;">${initials(
-        model.businessName
-      )}</div>`;
-
-  const wrapperStyle = forEmail
-    ? "max-width:620px;margin:0 auto;background:#ffffff;border:1px solid #e2e8f0;border-radius:16px;padding:20px;font-family:Arial,sans-serif;color:#0f172a;"
-    : "background:#ffffff;border:1px solid #e2e8f0;border-radius:16px;padding:20px;color:#0f172a;";
-
-  return `
-    <div style="${wrapperStyle}">
-      <div style="display:flex;justify-content:space-between;gap:12px;align-items:center;padding-bottom:14px;border-bottom:1px solid #e2e8f0;">
-        <div style="display:flex;gap:10px;align-items:center;">${logoBlock}<div><div style="font-size:18px;font-weight:700;">${safe(
-    model.businessName
-  )}</div>${address ? `<div style="font-size:12px;color:#64748b;">${safe(address)}</div>` : ""}${
-    model.businessPhone ? `<div style="font-size:12px;color:#64748b;">${safe(model.businessPhone)}</div>` : ""
-  }${model.businessEmail ? `<div style="font-size:12px;color:#64748b;">${safe(model.businessEmail)}</div>` : ""}</div></div>
-        <div style="text-align:right;"><div style="font-size:12px;color:#64748b;">Receipt #</div><div style="font-weight:700;">${safe(
-          model.receiptNumber
-        )}</div><div style="font-size:12px;color:#64748b;">${safe(model.dateText)}</div></div>
-      </div>
-
-      <div style="padding:16px 0;">
-        <div style="font-size:13px;color:#64748b;margin-bottom:4px;">Billed To</div>
-        <div style="font-size:16px;font-weight:600;">${safe(model.renterName)}</div>
-      </div>
-
-      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;border:1px solid #e2e8f0;border-radius:10px;overflow:hidden;">
-        <thead>
-          <tr style="background:#f8fafc;">
-            <th align="left" style="padding:10px;font-size:12px;color:#475569;">Line Item</th>
-            <th align="right" style="padding:10px;font-size:12px;color:#475569;">Amount</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${model.lineItems
-            .map(
-              (item) => `<tr><td style="padding:10px;border-top:1px solid #e2e8f0;">${safe(item.label)}</td><td align="right" style="padding:10px;border-top:1px solid #e2e8f0;">${safe(item.amountText)}</td></tr>`
-            )
-            .join("")}
-        </tbody>
-      </table>
-
-      <div style="display:flex;justify-content:space-between;gap:12px;padding-top:14px;">
-        <div style="font-size:13px;color:#475569;">
-          <div><strong>Payment Method:</strong> ${safe(model.paymentMethod)}</div>
-          ${model.notes ? `<div><strong>Notes:</strong> ${safe(model.notes)}</div>` : ""}
-        </div>
-        <div style="text-align:right;"><div style="font-size:12px;color:#64748b;">Total</div><div style="font-size:24px;font-weight:700;">${safe(
-          model.amountText
-        )}</div></div>
-      </div>
-
-      <div style="margin-top:20px;padding-top:12px;border-top:1px solid #e2e8f0;font-size:12px;color:#64748b;">
-        ${address ? `<div>${safe(address)}</div>` : ""}
-        ${model.businessPhone ? `<div>${safe(model.businessPhone)}</div>` : ""}
-        ${model.businessEmail ? `<div>${safe(model.businessEmail)}</div>` : ""}
-        ${model.receiptFooterNote ? `<div style="margin-top:8px;">${safe(model.receiptFooterNote)}</div>` : ""}
-        <div style="margin-top:8px;font-size:10px;opacity:0.8;">Powered by BoothRent Pro</div>
-      </div>
-    </div>
-  `;
 }
 
 async function addHistoryEvent({ actionType, renterId = "", renterName = "", amountCents = 0, summary, metadata = {} }) {
   await addDoc(collection(db, "history"), {
-    ownerUid: adminUid,
     actionType,
     renterId,
     renterName,
@@ -307,85 +205,6 @@ async function addHistoryEvent({ actionType, renterId = "", renterName = "", amo
     createdAt: serverTimestamp(),
     metadata,
   });
-}
-
-async function loadBusinessProfile() {
-  try {
-    const businessRef = doc(db, "businesses", adminUid);
-    const businessSnap = await getDoc(businessRef);
-    state.businessProfile = businessSnap.exists() ? businessSnap.data() : null;
-
-    if (!state.businessProfile) {
-      window.location.href = "/html/settings.html?setup=1";
-    }
-  } catch (error) {
-    console.error("Could not load business profile", error);
-    showToast("Could not load business profile. Check Firebase rules.");
-  }
-}
-
-async function saveBusinessProfile(form) {
-  const businessName = form.querySelector("#businessName").value.trim();
-  if (!businessName) throw new Error("Business name is required.");
-
-  const payload = {
-    ownerUid: adminUid,
-    businessName,
-    businessLogoUrl: form.querySelector("#businessLogoUrl").value.trim(),
-    ownerName: form.querySelector("#ownerName").value.trim(),
-    businessAddress: {
-      street: form.querySelector("#businessStreet").value.trim(),
-      city: form.querySelector("#businessCity").value.trim(),
-      state: form.querySelector("#businessState").value.trim(),
-      zip: form.querySelector("#businessZip").value.trim(),
-    },
-    businessPhone: form.querySelector("#businessPhone").value.trim(),
-    businessEmail: form.querySelector("#businessEmail").value.trim(),
-    receiptFooterNote: form.querySelector("#receiptFooterNote").value.trim(),
-    updatedAt: serverTimestamp(),
-    createdAt: state.businessProfile?.createdAt || serverTimestamp(),
-  };
-
-  await setDoc(doc(db, "businesses", adminUid), payload, { merge: true });
-  state.businessProfile = payload;
-}
-
-async function deleteBusinessAccountAndData() {
-  const collectionsToDelete = ["renters", "ledger", "history", "messages"];
-
-  for (const collectionName of collectionsToDelete) {
-    const snap = await getDocs(query(collection(db, collectionName), where("ownerUid", "==", adminUid), limit(500)));
-    if (!snap.empty) {
-      const batch = writeBatch(db);
-      snap.docs.forEach((item) => batch.delete(item.ref));
-      await batch.commit();
-    }
-  }
-
-  await deleteDoc(doc(db, "businesses", adminUid));
-  localStorage.removeItem("boothrent_admin");
-  sessionStorage.removeItem("boothrent_admin");
-  localStorage.removeItem("boothrent_admin_email");
-  localStorage.removeItem("boothrent_admin_uid");
-  window.location.href = "/html/login.html";
-}
-
-async function deleteDocsByQuery(baseQuery) {
-  while (true) {
-    const snap = await getDocs(baseQuery);
-    if (snap.empty) break;
-
-    const batch = writeBatch(db);
-    snap.docs.forEach((item) => batch.delete(item.ref));
-    await batch.commit();
-  }
-}
-
-async function deleteRenterAndRelatedData(renter) {
-  await deleteDocsByQuery(query(collection(db, "ledger"), where("renterId", "==", renter.id), limit(200)));
-  await deleteDocsByQuery(query(collection(db, "history"), where("renterId", "==", renter.id), limit(200)));
-  await deleteDocsByQuery(query(collection(db, "messages"), where("renterId", "==", renter.id), limit(200)));
-  await deleteDoc(doc(db, "renters", renter.id));
 }
 
 function renderSummary(filtered) {
@@ -440,15 +259,12 @@ function renderTable() {
     row.tabIndex = 0;
 
     const status = statusFromRenter(renter);
-    const themeColor = renterThemeColor(renter);
-    const profileTextColor = colorTextForBackground(themeColor);
-
-    row.style.background = hexToRgba(themeColor, 0.08);
-    row.style.borderLeft = `4px solid ${themeColor}`;
+    const profileColor = renter.profileColor || "#7c3aed";
+    const profileTextColor = colorTextForBackground(profileColor);
 
     row.innerHTML = `
       <div class="renter-cell">
-        <div class="avatar" style="background:${themeColor};color:${profileTextColor};">${initials(renter.displayName)}</div>
+        <div class="avatar" style="background:${profileColor};color:${profileTextColor};">${initials(renter.displayName)}</div>
         <div>
           <strong>${safe(renter.displayName)}</strong>
           <span class="subline">Station: ${safe(renter.station || "-")}</span>
@@ -465,7 +281,6 @@ function renderTable() {
     const actionGroup = row.querySelector(".action-group");
     actionGroup.appendChild(buildActionButton("Record Payment", () => openLedgerModal("payment", renter.id)));
     actionGroup.appendChild(buildActionButton("Email", () => openEmailOptionsModal(renter.id)));
-    actionGroup.appendChild(buildActionButton("Receipt", () => openReceiptModal(renter.id)));
     actionGroup.appendChild(buildActionButton("Edit", () => openEditRenterModal(renter)));
 
     row.addEventListener("click", () => openDrawer(renter.id));
@@ -485,7 +300,7 @@ function openDrawer(renterId) {
   drawerTitle.textContent = `${renter.displayName || "Renter"} Profile`;
 
   const ledgerItems = (state.ledgerByRenter.get(renter.id) || []).slice(0, 12);
-  const accent = renterThemeColor(renter);
+  const accent = renter.profileColor || "#7c3aed";
 
   drawerBody.innerHTML = `
     <div class="profile-accent" style="background:${accent};"></div>
@@ -503,7 +318,6 @@ function openDrawer(renterId) {
       <button class="btn" id="drawerAddCharge">Add Charge</button>
       <button class="btn" id="drawerAddFee">Add Late Fee</button>
       <button class="btn" id="drawerEmail">Email</button>
-      <button class="btn" id="drawerReceipt">Receipt</button>
       <button class="btn" id="drawerRecordPayment">Record Payment</button>
     </div>
 
@@ -531,7 +345,6 @@ function openDrawer(renterId) {
   document.getElementById("drawerAddCharge")?.addEventListener("click", () => openLedgerModal("charge", renter.id));
   document.getElementById("drawerAddFee")?.addEventListener("click", () => openLedgerModal("fee", renter.id));
   document.getElementById("drawerEmail")?.addEventListener("click", () => openEmailOptionsModal(renter.id));
-  document.getElementById("drawerReceipt")?.addEventListener("click", () => openReceiptModal(renter.id));
   document.getElementById("drawerRecordPayment")?.addEventListener("click", () => openLedgerModal("payment", renter.id));
 }
 
@@ -590,7 +403,7 @@ async function adjustBalanceWithLedger({ renterId, type, amountCents, note = "",
 }
 
 function openAddRenterModal() {
-  const colorOptions = THEME_COLOR_PALETTE.map((color) => `<option value="${color}">${color}</option>`).join("");
+  const colorOptions = PROFILE_COLOR_PALETTE.map((color) => `<option value="${color}">${color}</option>`).join("");
 
   openModal(
     "Add Renter",
@@ -602,7 +415,7 @@ function openAddRenterModal() {
       <div><label for="rentAmount">Weekly Rent ($)</label><input id="rentAmount" type="number" min="0" step="0.01" required /></div>
       <div><label for="dueDate">Due Date</label><input id="dueDate" type="date" required /></div>
       <div><label for="dueDay">Due Day</label><input id="dueDay" placeholder="Tuesday" required /></div>
-      <div><label for="themeColor">Profile Theme Color</label><select id="themeColor">${colorOptions}</select></div>
+      <div><label for="profileColor">Profile Color</label><select id="profileColor">${colorOptions}</select></div>
       <div class="full"><label for="notes">Notes</label><textarea id="notes"></textarea></div>
       <div class="modal-actions full">
         <button type="button" class="btn" id="cancelAdd">Cancel</button>
@@ -611,7 +424,8 @@ function openAddRenterModal() {
     </form>
   `,
     () => {
-      document.getElementById("themeColor").value = getRandomThemeColor();
+      const randomColor = pickRandomProfileColor();
+      document.getElementById("profileColor").value = randomColor;
 
       document.getElementById("cancelAdd").addEventListener("click", closeModal);
       document.getElementById("addRenterForm").addEventListener("submit", async (e) => {
@@ -622,7 +436,6 @@ function openAddRenterModal() {
         const newRenterRef = doc(collection(db, "renters"));
         const displayName = form.querySelector("#name").value.trim();
         await setDoc(newRenterRef, {
-          ownerUid: adminUid,
           displayName,
           email: form.querySelector("#email").value.trim(),
           phone: "",
@@ -635,7 +448,7 @@ function openAddRenterModal() {
             amountCents: toCents(form.querySelector("#rentAmount").value),
             dueDay: form.querySelector("#dueDay").value.trim(),
           },
-          themeColor: form.querySelector("#themeColor").value,
+          profileColor: form.querySelector("#profileColor").value,
           balanceCents: 0,
           nextDueAt: Timestamp.fromDate(dueDate),
           statusOverride: null,
@@ -662,8 +475,8 @@ function openAddRenterModal() {
 }
 
 function openEditRenterModal(renter) {
-  const colorOptions = THEME_COLOR_PALETTE.map(
-    (color) => `<option value="${color}" ${renterThemeColor(renter) === color ? "selected" : ""}>${color}</option>`
+  const colorOptions = PROFILE_COLOR_PALETTE.map(
+    (color) => `<option value="${color}" ${renter.profileColor === color ? "selected" : ""}>${color}</option>`
   ).join("");
 
   openModal(
@@ -676,7 +489,7 @@ function openEditRenterModal(renter) {
       <div><label for="rentAmount">Weekly Rent ($)</label><input id="rentAmount" type="number" min="0" step="0.01" value="${((renter.rentPlan?.amountCents || 0) / 100).toFixed(2)}" required /></div>
       <div><label for="dueDate">Due Date</label><input id="dueDate" type="date" value="${new Date(renter.nextDueAt?.toDate?.() || Date.now()).toISOString().slice(0, 10)}" required /></div>
       <div><label for="dueDay">Due Day</label><input id="dueDay" value="${safe(renter.rentPlan?.dueDay)}" required /></div>
-      <div><label for="themeColor">Profile Theme Color</label><select id="themeColor">${colorOptions}</select></div>
+      <div><label for="profileColor">Profile Color</label><select id="profileColor">${colorOptions}</select></div>
       <div>
         <label for="statusOverride">Override Status</label>
         <select id="statusOverride">
@@ -687,7 +500,7 @@ function openEditRenterModal(renter) {
       <div class="full"><label for="notes">Notes</label><textarea id="notes">${safe(renter.notes)}</textarea></div>
       <div class="full danger-zone">
         <h3>Danger Zone</h3>
-        <p class="subline">Deleting renter removes renter, charges, history, and messages from Firebase.</p>
+        <p class="subline">Soft delete hides this renter from active lists but keeps charges/history.</p>
         <label for="deleteConfirmText">Type DELETE to enable delete</label>
         <input id="deleteConfirmText" placeholder="DELETE" />
         <button type="button" class="btn danger" id="deleteRenterBtn" disabled>Delete renter</button>
@@ -708,11 +521,22 @@ function openEditRenterModal(renter) {
       });
 
       deleteBtn.addEventListener("click", async () => {
-        await deleteRenterAndRelatedData(renter);
+        await updateDoc(doc(db, "renters", renter.id), {
+          status: "deleted",
+          deletedAt: serverTimestamp(),
+          updatedAt: serverTimestamp(),
+        });
+
+        await addHistoryEvent({
+          actionType: "renter_deleted",
+          renterId: renter.id,
+          renterName: renter.displayName,
+          summary: `Renter deleted: ${renter.displayName}`,
+        });
 
         closeModal();
         closeDrawer();
-        showToast("Renter and related data deleted");
+        showToast("Renter deleted (soft delete)");
       });
 
       document.getElementById("editRenterForm").addEventListener("submit", async (e) => {
@@ -728,7 +552,7 @@ function openEditRenterModal(renter) {
             amountCents: toCents(form.querySelector("#rentAmount").value),
             dueDay: form.querySelector("#dueDay").value.trim(),
           },
-          themeColor: form.querySelector("#themeColor").value,
+          profileColor: form.querySelector("#profileColor").value,
           nextDueAt: Timestamp.fromDate(new Date(form.querySelector("#dueDate").value)),
           statusOverride: form.querySelector("#statusOverride").value || null,
           notes: form.querySelector("#notes").value.trim(),
@@ -932,60 +756,6 @@ function openCreateChargeModal() {
   );
 }
 
-function openReceiptModal(renterId) {
-  const renter = state.renters.find((item) => item.id === renterId);
-  if (!renter) return;
-  const latestPayment = (state.ledgerByRenter.get(renterId) || []).find((entry) => entry.type === "payment");
-  if (!latestPayment) {
-    showToast("No payment found for receipt yet.");
-    return;
-  }
-
-  const receiptModel = buildReceiptModel(renter, latestPayment);
-  const screenHtml = buildReceiptHtml(receiptModel);
-  const emailHtml = buildReceiptHtml(receiptModel, { forEmail: true });
-
-  openModal(
-    "Professional Receipt",
-    `
-    <div class="form-grid">
-      <div class="full" id="receiptPreviewContainer">${screenHtml}</div>
-      <div class="full receipt-settings-link">
-        <p class="subline">Business logo and contact details come from Settings.</p>
-        <button class="btn" type="button" id="openReceiptSettingsBtn">Open Settings</button>
-      </div>
-      <div class="full">
-        <label for="receiptEmailHtml">Receipt Email HTML</label>
-        <textarea id="receiptEmailHtml">${safe(emailHtml)}</textarea>
-      </div>
-      <div class="modal-actions full">
-        <button class="btn" type="button" id="copyReceiptHtmlBtn">Copy Email HTML</button>
-        <button class="btn" type="button" id="openReceiptEmailBtn">Open Gmail Draft</button>
-      </div>
-    </div>
-  `,
-    () => {
-      document.getElementById("openReceiptSettingsBtn").addEventListener("click", () => {
-        window.location.href = "/html/settings.html";
-      });
-
-      document.getElementById("copyReceiptHtmlBtn").addEventListener("click", async () => {
-        await navigator.clipboard.writeText(document.getElementById("receiptEmailHtml").value);
-        showToast("Receipt email HTML copied");
-      });
-
-      document.getElementById("openReceiptEmailBtn").addEventListener("click", () => {
-        const subject = `${receiptModel.businessName} Receipt ${receiptModel.receiptNumber}`;
-        const plainBody = `Hi ${receiptModel.renterName},\n\nPlease find your receipt #${receiptModel.receiptNumber} for ${receiptModel.amountText}.\n\nThank you.`;
-        const url = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(
-          safe(renter.email)
-        )}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(plainBody)}`;
-        window.open(url, "_blank");
-      });
-    }
-  );
-}
-
 function openEmailOptionsModal(renterId) {
   const renter = state.renters.find((item) => item.id === renterId);
   if (!renter) return;
@@ -1065,64 +835,6 @@ function openEmailOptionsModal(renterId) {
 
         closeModal();
         showToast("Email marked as sent");
-      });
-    }
-  );
-}
-
-function openBusinessSettingsModal({ isFirstTimeSetup = false } = {}) {
-  const business = state.businessProfile || {};
-  openModal(
-    isFirstTimeSetup ? "Set Up Your Business" : "Business Settings",
-    `
-    <form id="businessSettingsForm" class="form-grid">
-      <div class="full"><p class="subline">${isFirstTimeSetup ? "Set up your business profile before using the dashboard." : "Update business details used in receipts and emails."}</p></div>
-      <div><label for="businessName">Business Name *</label><input id="businessName" value="${safe(business.businessName)}" required /></div>
-      <div><label for="businessLogoUrl">Business Logo URL (shown on receipts)</label><input id="businessLogoUrl" value="${safe(business.businessLogoUrl)}" /></div>
-      <div><label for="ownerName">Owner Name</label><input id="ownerName" value="${safe(business.ownerName)}" /></div>
-      <div><label for="businessPhone">Business Phone</label><input id="businessPhone" value="${safe(business.businessPhone)}" /></div>
-      <div><label for="businessEmail">Business Email</label><input id="businessEmail" value="${safe(business.businessEmail || adminEmail)}" /></div>
-      <div><label for="businessStreet">Street</label><input id="businessStreet" value="${safe(business.businessAddress?.street)}" /></div>
-      <div><label for="businessCity">City</label><input id="businessCity" value="${safe(business.businessAddress?.city)}" /></div>
-      <div><label for="businessState">State</label><input id="businessState" value="${safe(business.businessAddress?.state)}" /></div>
-      <div><label for="businessZip">ZIP</label><input id="businessZip" value="${safe(business.businessAddress?.zip)}" /></div>
-      <div class="full"><label for="receiptFooterNote">Receipt Footer Note</label><textarea id="receiptFooterNote">${safe(
-        business.receiptFooterNote
-      )}</textarea></div>
-      <div class="full danger-zone">
-        <h3>Delete Account</h3>
-        <p class="subline">Type DELETE ACCOUNT to remove this business profile and data owned by this account.</p>
-        <input id="deleteAccountConfirm" placeholder="DELETE ACCOUNT" />
-        <button type="button" class="btn danger" id="deleteAccountBtn" disabled>Delete Account</button>
-      </div>
-      <div class="modal-actions full">
-        <button type="button" class="btn" id="cancelBusinessSettings" ${isFirstTimeSetup ? "style='display:none;'" : ""}>Cancel</button>
-        <button type="submit" class="btn accent">Save Settings</button>
-      </div>
-    </form>
-  `,
-    () => {
-      document.getElementById("cancelBusinessSettings")?.addEventListener("click", closeModal);
-
-      const deleteConfirm = document.getElementById("deleteAccountConfirm");
-      const deleteBtn = document.getElementById("deleteAccountBtn");
-      deleteConfirm.addEventListener("input", () => {
-        deleteBtn.disabled = deleteConfirm.value.trim() !== "DELETE ACCOUNT";
-      });
-
-      deleteBtn.addEventListener("click", async () => {
-        await deleteBusinessAccountAndData();
-      });
-
-      document.getElementById("businessSettingsForm").addEventListener("submit", async (event) => {
-        event.preventDefault();
-        try {
-          await saveBusinessProfile(event.currentTarget);
-          closeModal();
-          showToast("Business settings saved");
-        } catch (error) {
-          showToast(error.message || "Could not save settings");
-        }
       });
     }
   );
@@ -1247,63 +959,16 @@ function openHistoryModal() {
 }
 
 function setupRealtimeListeners() {
-  onSnapshot(
-    query(collection(db, "renters"), orderBy("updatedAt", "desc")),
-    (snapshot) => {
-      state.renters = snapshot.docs
-        .map((d) => ({ id: d.id, ...d.data() }))
-        .filter((renter) => !renter.ownerUid || renter.ownerUid === adminUid);
-      renderTable();
+  onSnapshot(query(collection(db, "renters"), orderBy("updatedAt", "desc")), (snapshot) => {
+    state.renters = snapshot.docs
+      .map((d) => ({ id: d.id, ...d.data() }))
+      .filter((renter) => !renter.ownerUid || renter.ownerUid === adminUid);
+    renderTable();
 
-      if (state.selectedRenterId && drawer.classList.contains("open")) {
-        const renter = state.renters.find((item) => item.id === state.selectedRenterId);
-        if (renter && renter.status !== "deleted") openDrawer(state.selectedRenterId);
-        else closeDrawer();
-      }
-    },
-    (error) => {
-      console.error("Renters listener failed", error);
-      showToast("Could not load renters. Check Firebase rules.");
-      state.renters = [];
-      renderTable();
-    }
-  );
-
-  onSnapshot(
-    query(collection(db, "ledger"), orderBy("createdAt", "desc"), limit(500)),
-    (snapshot) => {
-      const ledgerByRenter = new Map();
-      snapshot.docs.forEach((docSnap) => {
-        const entry = { id: docSnap.id, ...docSnap.data() };
-        if (entry.ownerUid && entry.ownerUid !== adminUid) return;
-        const arr = ledgerByRenter.get(entry.renterId) || [];
-        arr.push(entry);
-        ledgerByRenter.set(entry.renterId, arr);
-      });
-
-      state.ledgerByRenter = ledgerByRenter;
-      renderTable();
-      if (state.selectedRenterId && drawer.classList.contains("open")) openDrawer(state.selectedRenterId);
-    },
-    (error) => {
-      console.error("Ledger listener failed", error);
-      showToast("Could not load ledger. Check Firebase rules.");
-      state.ledgerByRenter = new Map();
-      renderTable();
-    }
-  );
-
-  onSnapshot(
-    query(collection(db, "history"), orderBy("createdAt", "desc"), limit(500)),
-    (snapshot) => {
-      state.historyItems = snapshot.docs
-        .map((docSnap) => ({ id: docSnap.id, ...docSnap.data() }))
-        .filter((item) => !item.ownerUid || item.ownerUid === adminUid);
-    },
-    (error) => {
-      console.error("History listener failed", error);
-      showToast("Could not load history. Check Firebase rules.");
-      state.historyItems = [];
+    if (state.selectedRenterId && drawer.classList.contains("open")) {
+      const renter = state.renters.find((item) => item.id === state.selectedRenterId);
+      if (renter && renter.status !== "deleted") openDrawer(state.selectedRenterId);
+      else closeDrawer();
     }
   );
 }
@@ -1314,10 +979,15 @@ function setupBackToTop() {
     else backToTopBtn.classList.remove("show");
   });
 
-  backToTopBtn.addEventListener("click", () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  });
-}
+  onSnapshot(query(collection(db, "ledger"), orderBy("createdAt", "desc"), limit(500)), (snapshot) => {
+    const ledgerByRenter = new Map();
+    snapshot.docs.forEach((docSnap) => {
+      const entry = { id: docSnap.id, ...docSnap.data() };
+      if (entry.ownerUid && entry.ownerUid !== adminUid) return;
+      const arr = ledgerByRenter.get(entry.renterId) || [];
+      arr.push(entry);
+      ledgerByRenter.set(entry.renterId, arr);
+    });
 
 function setupMobileBottomNav() {
   mobileBottomNav?.querySelectorAll("button[data-action]").forEach((button) => {
@@ -1337,16 +1007,10 @@ function setupMobileBottomNav() {
       if (action === "logout") logoutBtn.click();
     });
   });
-}
 
-function runStartupActionFromUrl() {
-  const action = new URLSearchParams(window.location.search).get("action");
-  if (!action) return;
-
-  if (action === "add-renter") openAddRenterModal();
-  if (action === "charge") openCreateChargeModal();
-  if (action === "history") openHistoryModal();
-  if (action === "settings") window.location.href = "/html/settings.html";
+  onSnapshot(query(collection(db, "history"), orderBy("createdAt", "desc"), limit(500)), (snapshot) => {
+    state.historyItems = snapshot.docs.map((docSnap) => ({ id: docSnap.id, ...docSnap.data() }));
+  });
 }
 
 searchInput.addEventListener("input", (e) => {
@@ -1357,9 +1021,6 @@ searchInput.addEventListener("input", (e) => {
 addRenterBtn.addEventListener("click", openAddRenterModal);
 globalChargeBtn.addEventListener("click", openCreateChargeModal);
 historyBtn.addEventListener("click", openHistoryModal);
-settingsBtn?.addEventListener("click", () => {
-  window.location.href = "/html/settings.html";
-});
 
 logoutBtn.addEventListener("click", () => {
   localStorage.removeItem("boothrent_admin");
@@ -1386,4 +1047,3 @@ setupRealtimeListeners();
 setupBackToTop();
 setupMobileBottomNav();
 loadBusinessProfile();
-runStartupActionFromUrl();
