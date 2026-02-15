@@ -4,12 +4,16 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>BoothRent Pro | Admin Dashboard</title>
+    <link rel="icon" type="image/png" href="https://boothrentpro.com/assets/BoothRentprofavicon.png">
     <link rel="stylesheet" href="../css/dashboard.css" />
   </head>
   <body>
     <div class="dashboard-shell">
       <header class="topbar">
-        <div class="brand">BoothRent Pro</div>
+        <div class="brand">
+          <img src="../assets/BoothRentprologo.png" alt="Booth Rent Pro logo" class="brand-logo" />
+          <span>BoothRent Pro</span>
+        </div>
         <label class="search-wrap" for="searchInput">
           <span class="sr-only">Search renters</span>
           <input id="searchInput" type="search" placeholder="Search by name, email, or station..." />
@@ -17,6 +21,8 @@
         <div class="top-actions">
           <button id="addRenterBtn" class="btn accent">+ Add Renter</button>
           <button id="globalChargeBtn" class="btn">Create Charge</button>
+          <button id="historyBtn" class="btn">History</button>
+          <button id="settingsBtn" class="btn accent">Settings</button>
           <button id="logoutBtn" class="btn danger">Logout</button>
         </div>
       </header>
@@ -73,6 +79,19 @@
         <div id="modalBody" class="modal-body"></div>
       </div>
     </div>
+
+
+    <nav id="mobileBottomNav" class="mobile-bottom-nav" aria-label="Mobile quick actions">
+      <button type="button" class="mobile-nav-btn" data-action="move" aria-label="Move action"><span class="mobile-nav-icon">MV</span><small>Move</small></button>
+      <button type="button" class="mobile-nav-btn" data-action="add-renter" aria-label="Add renter"><span class="mobile-nav-icon">AR</span><small>Add</small></button>
+      <button type="button" class="mobile-nav-btn" data-action="create" aria-label="Create action"><span class="mobile-nav-icon">CR</span><small>Create</small></button>
+      <button type="button" class="mobile-nav-btn" data-action="charge" aria-label="Charge action"><span class="mobile-nav-icon">CH</span><small>Charge</small></button>
+      <button type="button" class="mobile-nav-btn" data-action="history" aria-label="Open history"><span class="mobile-nav-icon">HS</span><small>History</small></button>
+      <button type="button" class="mobile-nav-btn" data-action="settings" aria-label="Open settings"><span class="mobile-nav-icon">ST</span><small>Settings</small></button>
+      <button type="button" class="mobile-nav-btn" data-action="logout" aria-label="Logout"><span class="mobile-nav-icon">LO</span><small>Logout</small></button>
+    </nav>
+
+    <button id="backToTopBtn" class="back-to-top" aria-label="Back to top">↑</button>
 
     <div id="toastRegion" class="toast-region" aria-live="polite" aria-atomic="true"></div>
 
