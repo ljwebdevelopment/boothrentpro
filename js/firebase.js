@@ -9,12 +9,13 @@ import {
 
 // Replace these placeholder values with your Firebase project's real keys.
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_AUTH_DOMAIN",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_STORAGE_BUCKET",
-  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-  appId: "YOUR_APP_ID",
+  apiKey: "AIzaSyAVgmbi8IJcWDhC1fAno51hXD0vqPA-eZ0",
+  authDomain: "boothrent-pro-e4176.firebaseapp.com",
+  projectId: "boothrent-pro-e4176",
+  storageBucket: "boothrent-pro-e4176.firebasestorage.app",
+  messagingSenderId: "713153375362",
+  appId: "1:713153375362:web:4da72895d574e0c67d189b",
+  measurementId: "G-Z9LJC7EBGB"
 };
 
 const app = initializeApp(firebaseConfig);
