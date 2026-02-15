@@ -1,14 +1,22 @@
 :root {
-  --bg-1: ##ffff;
-  --bg-2: #1e293b;
-  --bg-3: #334155;
-  --card-bg: rgba(255, 255, 255, 0.06);
-  --card-border: rgba(255, 255, 255, 0.14);
-  --text-main: #f8fafc;
-  --text-muted: #cbd5e1;
-  --accent: #8b5cf6;
-  --accent-2: #14b8a6;
-  --danger: #f43f5e;
+  --bg-1: #ffffff;
+  --bg-2: #f8fafc;
+  --bg-3: #f1f5f9;
+
+  --card-bg: #ffffff;
+  --card-border: #e2e8f0;
+  --card-shadow: 0 6px 18px rgba(15, 23, 42, 0.06);
+
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+
+  --accent: #7c3aed;
+  --accent-2: #0ea5e9;
+  --accent-soft: rgba(124, 58, 237, 0.08);
+
+  --danger: #e11d48;
+  --success: #16a34a;
+  --warning: #f59e0b;
 }
 
 * { box-sizing: border-box; }
@@ -18,7 +26,7 @@ body {
   min-height: 100vh;
   font-family: "Inter", "Segoe UI", Roboto, sans-serif;
   color: var(--text-main);
-  background: linear-gradient(-45deg, var(--bg-1), var(--bg-2), #0b1120, var(--bg-3));
+  background: var(--bg-2);
   background-size: 300% 300%;
   animation: gradientShift 16s ease infinite;
 }
