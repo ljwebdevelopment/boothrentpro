@@ -7,7 +7,7 @@
 }
 
 * { box-sizing: border-box; }
-body { margin: 0; background: #f8fafc; color: var(--text); font-family: Inter, "Segoe UI", sans-serif; }
+body { margin: 0; background: #f8fafc; color: var(--text); font-family: Inter, "Segoe UI", sans-serif; padding-bottom: 110px; }
 
 .settings-page { min-height: 100vh; padding: 24px; display: grid; place-items: start center; }
 .settings-card { width: min(920px, 100%); background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 18px; }
@@ -41,6 +41,45 @@ textarea { min-height: 90px; }
 
 .danger-zone { margin-top: 20px; border: 1px solid #fecdd3; border-radius: 12px; padding: 12px; background: #fff1f2; }
 .status-text { margin-top: 12px; min-height: 22px; }
+
+.settings-bottom-nav {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  max-width: 560px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  background: #ffffff;
+  border-top: 1px solid var(--line);
+  box-shadow: 0 -8px 18px rgba(15, 23, 42, 0.08);
+  z-index: 100;
+  padding: 8px;
+  border-top-left-radius: 14px;
+  border-top-right-radius: 14px;
+}
+
+.settings-nav-btn {
+  border: 0;
+  background: transparent;
+  color: #475569;
+  min-height: 58px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.settings-nav-btn i { font-size: 1.25rem; }
+
+.settings-nav-btn:hover,
+.settings-nav-btn:focus-visible,
+.settings-nav-btn:active {
+  background: rgba(124, 58, 237, 0.1);
+  color: #6d28d9;
+}
 
 @media (max-width: 760px) {
   .settings-page { padding: 16px; }

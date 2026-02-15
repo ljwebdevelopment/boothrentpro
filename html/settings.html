@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>BoothRent Pro | Settings</title>
     <link rel="icon" type="image/png" href="https://boothrentpro.com/assets/BoothRentprofavicon.png" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
     <link rel="stylesheet" href="../css/settings.css" />
   </head>
   <body>
@@ -17,8 +18,12 @@
         <p class="subline">Everything here is used on receipts and receipt emails.</p>
 
         <form id="settingsForm" class="form-grid">
-          <div><label for="businessName">Business Name *</label><input id="businessName" required /></div>
-          <div><label for="businessLogoUrl">Business Logo URL (shown on receipts)</label><input id="businessLogoUrl" /></div>
+          <div><label for="businessName">Business Name</label><input id="businessName" /></div>
+          <div>
+            <label for="businessLogoFile">Business Logo Upload (shown on receipts)</label>
+            <input id="businessLogoFile" type="file" accept="image/*" />
+            <input id="businessLogoUrl" type="hidden" />
+          </div>
           <div><label for="ownerName">Owner Name</label><input id="ownerName" /></div>
           <div><label for="businessPhone">Business Phone</label><input id="businessPhone" /></div>
           <div><label for="businessEmail">Business Email</label><input id="businessEmail" /></div>
@@ -43,6 +48,15 @@
         <p id="statusText" class="status-text" aria-live="polite"></p>
       </section>
     </main>
+
+    <nav id="settingsBottomNav" class="settings-bottom-nav" aria-label="Quick actions">
+      <button type="button" class="settings-nav-btn" data-action="home" aria-label="Home"><i class="fa-solid fa-house"></i></button>
+      <button type="button" class="settings-nav-btn" data-action="add-renter" aria-label="Add renter"><i class="fa-solid fa-plus"></i></button>
+      <button type="button" class="settings-nav-btn" data-action="charge" aria-label="Charge"><i class="fa-solid fa-dollar-sign"></i></button>
+      <button type="button" class="settings-nav-btn" data-action="history" aria-label="History"><i class="fa-solid fa-book"></i></button>
+      <button type="button" class="settings-nav-btn" data-action="settings" aria-label="Settings"><i class="fa-solid fa-gear"></i></button>
+      <button type="button" class="settings-nav-btn" data-action="logout" aria-label="Log out"><i class="fa-solid fa-arrow-right-from-bracket"></i></button>
+    </nav>
 
     <script type="module" src="../js/settings.js"></script>
   </body>

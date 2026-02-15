@@ -1294,19 +1294,28 @@ function setupMobileBottomNav() {
       event.preventDefault();
       event.stopPropagation();
       const action = button.getAttribute("data-action");
-      if (action === "move") {
-        if (state.selectedRenterId) openDrawer(state.selectedRenterId);
-        else if (getFilteredRenters().length) openDrawer(getFilteredRenters()[0].id);
-        else showToast("No renter available to open.");
+      if (action === "home") {
+        closeModal();
+        closeDrawer();
+        window.scrollTo({ top: 0, behavior: "smooth" });
       }
       if (action === "add-renter") openAddRenterModal();
-      if (action === "create") openLedgerModal("charge");
       if (action === "charge") openCreateChargeModal();
       if (action === "history") openHistoryModal();
       if (action === "settings") window.location.href = "/html/settings.html";
       if (action === "logout") logoutBtn.click();
     });
   });
+}
+
+function runStartupActionFromUrl() {
+  const action = new URLSearchParams(window.location.search).get("action");
+  if (!action) return;
+
+  if (action === "add-renter") openAddRenterModal();
+  if (action === "charge") openCreateChargeModal();
+  if (action === "history") openHistoryModal();
+  if (action === "settings") window.location.href = "/html/settings.html";
 }
 
 searchInput.addEventListener("input", (e) => {
@@ -1346,3 +1355,4 @@ setupRealtimeListeners();
 setupBackToTop();
 setupMobileBottomNav();
 loadBusinessProfile();
+runStartupActionFromUrl();

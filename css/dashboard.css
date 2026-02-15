@@ -106,14 +106,31 @@ body {
   color: #9f1239;
 }
 
-.content { padding: 24px; }
+.content {
+  padding: 24px;
+  padding-bottom: 120px;
+}
 
 .themed-row {
   border-radius: 10px;
 }
 
 .mobile-bottom-nav {
-  display: none;
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  max-width: 560px;
+  margin: 0 auto;
+  background: #ffffff;
+  border-top: 1px solid var(--line);
+  box-shadow: 0 -8px 18px rgba(15, 23, 42, 0.08);
+  z-index: 85;
+  padding: 8px;
+  border-top-left-radius: 14px;
+  border-top-right-radius: 14px;
 }
 
 .back-to-top {
@@ -407,33 +424,25 @@ textarea { min-height: 88px; resize: vertical; }
 .mobile-nav-btn {
   border: 0;
   background: transparent;
-  color: var(--text);
+  color: #475569;
+  min-height: 58px;
+  border-radius: 12px;
   display: grid;
   place-items: center;
-  gap: 6px;
-  font-size: 0.78rem;
-  padding: 10px 6px;
-  min-height: 64px;
-  border-radius: 10px;
+  cursor: pointer;
   touch-action: manipulation;
+  transition: background 0.2s ease, color 0.2s ease;
 }
 
+.mobile-nav-btn i {
+  font-size: 1.25rem;
+}
+
+.mobile-nav-btn:hover,
+.mobile-nav-btn:focus-visible,
 .mobile-nav-btn:active {
-  background: rgba(124, 58, 237, 0.08);
-}
-
-.mobile-nav-icon {
-  display: grid;
-  place-items: center;
-  width: 30px;
-  height: 30px;
-  border-radius: 999px;
-  background: rgba(124, 58, 237, 0.14);
-  border: 1px solid rgba(124, 58, 237, 0.22);
-  color: #5b21b6;
-  font-size: 0.62rem;
-  font-weight: 700;
-  line-height: 1;
+  background: rgba(124, 58, 237, 0.1);
+  color: #6d28d9;
 }
 
 .receipt-settings-link {
@@ -447,7 +456,7 @@ textarea { min-height: 88px; resize: vertical; }
 .toast-region {
   position: fixed;
   right: 14px;
-  bottom: 14px;
+  bottom: 88px;
   display: grid;
   gap: 8px;
   z-index: 120;
@@ -494,7 +503,7 @@ textarea { min-height: 88px; resize: vertical; }
 
   .content {
     padding: 16px;
-    padding-bottom: 104px;
+    padding-bottom: 116px;
   }
 
   .summary-grid { grid-template-columns: 1fr; }
@@ -503,20 +512,6 @@ textarea { min-height: 88px; resize: vertical; }
 
   .top-actions {
     display: none;
-  }
-
-  .mobile-bottom-nav {
-    display: grid;
-    grid-template-columns: repeat(7, minmax(0, 1fr));
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: #ffffff;
-    border-top: 1px solid var(--line);
-    box-shadow: 0 -8px 18px rgba(15, 23, 42, 0.08);
-    z-index: 85;
-    padding: 6px;
   }
 
   .back-to-top {
