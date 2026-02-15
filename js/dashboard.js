@@ -970,6 +970,13 @@ function setupRealtimeListeners() {
       if (renter && renter.status !== "deleted") openDrawer(state.selectedRenterId);
       else closeDrawer();
     }
+  );
+}
+
+function setupBackToTop() {
+  window.addEventListener("scroll", () => {
+    if (window.scrollY > 300) backToTopBtn.classList.add("show");
+    else backToTopBtn.classList.remove("show");
   });
 
   onSnapshot(query(collection(db, "ledger"), orderBy("createdAt", "desc"), limit(500)), (snapshot) => {
@@ -982,9 +989,23 @@ function setupRealtimeListeners() {
       ledgerByRenter.set(entry.renterId, arr);
     });
 
-    state.ledgerByRenter = ledgerByRenter;
-    renderTable();
-    if (state.selectedRenterId && drawer.classList.contains("open")) openDrawer(state.selectedRenterId);
+function setupMobileBottomNav() {
+  mobileBottomNav?.querySelectorAll("button[data-action]").forEach((button) => {
+    button.addEventListener("click", (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      const action = button.getAttribute("data-action");
+      if (action === "home") {
+        closeModal();
+        closeDrawer();
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+      if (action === "add-renter") openAddRenterModal();
+      if (action === "charge") openCreateChargeModal();
+      if (action === "history") openHistoryModal();
+      if (action === "settings") window.location.href = "/html/settings.html";
+      if (action === "logout") logoutBtn.click();
+    });
   });
 
   onSnapshot(query(collection(db, "history"), orderBy("createdAt", "desc"), limit(500)), (snapshot) => {
