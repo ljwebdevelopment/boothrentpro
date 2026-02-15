@@ -18,6 +18,11 @@ const isLoggedIn =
 if (!isLoggedIn) window.location.href = "/html/login.html";
 
 const adminEmail = localStorage.getItem("boothrent_admin_email") || "admin@boothrent.local";
+const adminUid =
+  localStorage.getItem("boothrent_admin_uid") ||
+  `admin_${btoa(adminEmail).replace(/[^a-zA-Z0-9]/g, "").slice(0, 24)}`;
+
+const THEME_COLOR_PALETTE = ["#7c3aed", "#2563eb", "#0f766e", "#b45309", "#be123c", "#374151", "#166534", "#4338ca"];
 
 const PROFILE_COLOR_PALETTE = [
   "#7c3aed",
@@ -36,6 +41,7 @@ const state = {
   historyItems: [],
   searchText: "",
   selectedRenterId: null,
+  businessProfile: null,
 };
 
 const rentersTableBody = document.getElementById("rentersTableBody");
@@ -48,6 +54,8 @@ const globalChargeBtn = document.getElementById("globalChargeBtn");
 const historyBtn = document.getElementById("historyBtn");
 const logoutBtn = document.getElementById("logoutBtn");
 const searchInput = document.getElementById("searchInput");
+const backToTopBtn = document.getElementById("backToTopBtn");
+const mobileBottomNav = document.getElementById("mobileBottomNav");
 
 const drawer = document.getElementById("drawer");
 const drawerTitle = document.getElementById("drawerTitle");
@@ -231,6 +239,10 @@ function buildActionButton(text, callback, className = "btn") {
   return button;
 }
 
+function renterThemeColor(renter) {
+  return renter.themeColor || renter.profileColor || "#7c3aed";
+}
+
 function renderTable() {
   const filtered = getFilteredRenters();
   renderSummary(filtered);
@@ -243,7 +255,7 @@ function renderTable() {
 
   filtered.forEach((renter) => {
     const row = document.createElement("div");
-    row.className = "row grid-row";
+    row.className = "row grid-row themed-row";
     row.tabIndex = 0;
 
     const status = statusFromRenter(renter);
@@ -363,7 +375,7 @@ async function adjustBalanceWithLedger({ renterId, type, amountCents, note = "",
   const amount = Number(amountCents);
   if (!renterId || !amount || amount <= 0) return;
 
-  const multiplier = type === "payment" || type === "credit" ? -1 : 1;
+  const multiplier = type === "payment" ? -1 : 1;
 
   await runTransaction(db, async (transaction) => {
     const renterRef = doc(db, "renters", renterId);
@@ -372,6 +384,7 @@ async function adjustBalanceWithLedger({ renterId, type, amountCents, note = "",
 
     const ledgerRef = doc(collection(db, "ledger"));
     transaction.set(ledgerRef, {
+      ownerUid: adminUid,
       renterId,
       renterNameSnapshot: renterNameSnapshot || renterSnap.data().displayName || "Unknown renter",
       type,
@@ -947,7 +960,9 @@ function openHistoryModal() {
 
 function setupRealtimeListeners() {
   onSnapshot(query(collection(db, "renters"), orderBy("updatedAt", "desc")), (snapshot) => {
-    state.renters = snapshot.docs.map((d) => ({ id: d.id, ...d.data() }));
+    state.renters = snapshot.docs
+      .map((d) => ({ id: d.id, ...d.data() }))
+      .filter((renter) => !renter.ownerUid || renter.ownerUid === adminUid);
     renderTable();
 
     if (state.selectedRenterId && drawer.classList.contains("open")) {
@@ -961,6 +976,7 @@ function setupRealtimeListeners() {
     const ledgerByRenter = new Map();
     snapshot.docs.forEach((docSnap) => {
       const entry = { id: docSnap.id, ...docSnap.data() };
+      if (entry.ownerUid && entry.ownerUid !== adminUid) return;
       const arr = ledgerByRenter.get(entry.renterId) || [];
       arr.push(entry);
       ledgerByRenter.set(entry.renterId, arr);
@@ -989,6 +1005,7 @@ logoutBtn.addEventListener("click", () => {
   localStorage.removeItem("boothrent_admin");
   sessionStorage.removeItem("boothrent_admin");
   localStorage.removeItem("boothrent_admin_email");
+  localStorage.removeItem("boothrent_admin_uid");
   window.location.href = "/html/login.html";
 });
 
@@ -1006,3 +1023,6 @@ document.addEventListener("keydown", (e) => {
 });
 
 setupRealtimeListeners();
+setupBackToTop();
+setupMobileBottomNav();
+loadBusinessProfile();
