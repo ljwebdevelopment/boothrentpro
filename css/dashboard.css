@@ -1,24 +1,29 @@
 :root {
-  --bg: ##ffff;
-  --panel: #0f172a;
-  --panel-2: #131d34;
-  --line: rgba(148, 163, 184, 0.22);
-  --text: #e2e8f0;
-  --muted: #94a3b8;
-  --accent-a: #14b8a6;
-  --accent-b: #8b5cf6;
-  --paid: #22c55e;
-  --due: #0ea5e9;
-  --overdue: #f43f5e;
-  --partial: #f59e0b;
-  --hold: #64748b;
+  --bg-1: #ffffff;
+  --bg-2: #f8fafc;
+  --bg-3: #f1f5f9;
+
+  --card-bg: #ffffff;
+  --card-border: #e2e8f0;
+  --card-shadow: 0 6px 18px rgba(15, 23, 42, 0.06);
+
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+
+  --accent: #7c3aed;
+  --accent-2: #0ea5e9;
+  --accent-soft: rgba(124, 58, 237, 0.08);
+
+  --danger: #e11d48;
+  --success: #16a34a;
+  --warning: #f59e0b;
 }
 * { box-sizing: border-box; }
 
 body {
   margin: 0;
-  background: radial-gradient(circle at 20% 10%, #152341, var(--bg) 40%);
-  color: var(--text);
+  background: var(--bg-2);
+  color: var(--text-main);
   font-family: "Inter", "Segoe UI", sans-serif;
 }
 
