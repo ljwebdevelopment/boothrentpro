@@ -17,14 +17,10 @@ import {
 // ---------------------------
 // Session guard + global state
 // ---------------------------
-function goTo(relativePath) {
-  window.location.href = relativePath;
-}
-
 const isLoggedIn =
   localStorage.getItem("boothrent_admin") === "true" ||
   sessionStorage.getItem("boothrent_admin") === "true";
-if (!isLoggedIn) goTo("login.html");
+if (!isLoggedIn) window.location.href = "/html/login.html";
 
 const adminEmail = localStorage.getItem("boothrent_admin_email") || "admin@boothrent.local";
 
@@ -624,7 +620,7 @@ logoutBtn.addEventListener("click", () => {
   localStorage.removeItem("boothrent_admin");
   sessionStorage.removeItem("boothrent_admin");
   localStorage.removeItem("boothrent_admin_email");
-  goTo("login.html");
+  window.location.href = "/html/login.html";
 });
 
 drawerCloseBtn.addEventListener("click", closeDrawer);

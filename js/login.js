@@ -1,23 +1,10 @@
-// Small navigation helper so we never accidentally use leading "/" paths.
-function goTo(relativePath) {
-  window.location.href = relativePath;
-}
-
-// Decide dashboard path based on where login page is being served from.
-// - Root login (index.html) should go to html/dashboard.html
-// - /html/login.html should go to dashboard.html in same folder
-function getDashboardPath() {
-  const isInsideHtmlFolder = window.location.pathname.includes("/html/");
-  return isInsideHtmlFolder ? "dashboard.html" : "html/dashboard.html";
-}
-
 // Redirect already-logged-in admins immediately.
 const isLoggedIn =
   localStorage.getItem("boothrent_admin") === "true" ||
   sessionStorage.getItem("boothrent_admin") === "true";
 
 if (isLoggedIn) {
-  goTo(getDashboardPath());
+  window.location.href = "/html/dashboard.html";
 }
 
 const loginForm = document.getElementById("loginForm");
@@ -97,5 +84,5 @@ loginForm.addEventListener("submit", async (event) => {
   // Store current admin email for messages logging.
   localStorage.setItem("boothrent_admin_email", matchedAdmin.email);
 
-  goTo(getDashboardPath());
+  window.location.href = "/html/dashboard.html";
 });
